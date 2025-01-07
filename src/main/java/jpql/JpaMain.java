@@ -43,19 +43,13 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-            String query = "select t from Team t join fetch t.members";
-            List<Team> result = em.createQuery(query, Team.class)
-                    .getResultList();
+            //벌크 연산은 영속성x, db에만 반영
+            int resultCount = em.createQuery("update Member m set m.age = 20")
+                    .executeUpdate();
 
-            for (Team team: result) {
-                System.out.println("================================================================");
-                System.out.println("team= " + team.getName() + team.getMembers().size());
-                //회원1, 팀A(SQL)
-                //회원2, 팀A(1차캐시)
-                //회원3, 팀B(SQL)
-
-                //회원 100명 -> N + 1
-            }
+            em.clear();
+            Member findMember = em.find(Member.class, member1.getId());
+            System.out.println("findMember = " + findMember);
 
             tx.commit();
         } catch (Exception e) {
